@@ -20,8 +20,8 @@ def main():
   # Train our model with the training set provided.
   classifier.train()
 
-  # Test our classifier model on the test set.
-  classifier.test()
+  # # Test our classifier model on the test set.
+  # classifier.test()
 
 # Run our main program.
 if __name__ == "__main__":

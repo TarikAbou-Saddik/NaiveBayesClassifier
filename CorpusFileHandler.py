@@ -9,7 +9,7 @@ class CorpusFileHandler:
   DEFAULT_DIR = "data"
 
   @staticmethod
-  def parse_corpus(filename, vocabulary):
+  def parse_corpus(filename):
     path = CorpusFileHandler.set_path(filename)
     tweets = dict()
     with open(path, "r") as file:
@@ -29,11 +29,6 @@ class CorpusFileHandler:
   @staticmethod
   def set_path(filename):
     return os.path.join(CorpusFileHandler.DEFAULT_DIR, filename)
-
-  # By default, print out the tweets
-  def __str__(self):
-    for tweet in self.tweets.values():
-      print(tweet)
 
 
     
