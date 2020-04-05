@@ -40,3 +40,23 @@ class Language(Enum):
   Spanish = 3
   English = 4
   Portuguese = 5
+
+  @staticmethod
+  def from_str(label):
+    if label == 'eu':
+      return Language.Basque
+    if label == 'ca':
+      return Language.Catalan
+    if label == 'gl':
+      return Language.Galician
+    if label == 'es':
+      return Language.Spanish
+    if label == 'en':
+      return Language.English
+    if label == 'pt':
+      return Language.Portuguese
+
+
+class Result(Enum):
+  Wrong = 0
+  Correct = 1

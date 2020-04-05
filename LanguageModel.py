@@ -16,13 +16,22 @@ class LanguageModel:
     self.smoothing_value = smoothing_value
     self.probabilities = self.generate_probabilities()
 
+  count = 0
   def likelihood(self, tweet):
     # Break tweet into ngrams
     ngrams_tweet = self.get_ngrams_tweet(tweet)
     likelihood = 0
+    if LanguageModel.count == 0:
+      print('Length of ngrams in tweet: {0}'.format(len(ngrams_tweet)))
+    
     for ngram_tuple in ngrams_tweet:
+      counter = 0
       if ngram_tuple in self.probabilities:
+        counter = counter + 1
         likelihood = likelihood + log10(self.probabilities[ngram_tuple])
+      if LanguageModel.count == 0:
+        print('{0} probabilities used to sum to likelihood {1}'.format(counter, likelihood))
+    LanguageModel.count = LanguageModel.count + 1  
     return likelihood
 
   # TODO: Add smoothing to calculation
@@ -102,7 +111,7 @@ class LanguageModel:
 
   # For debug purposes
   def __str__(self):
-    sample_tweet = self.tweets[3]
+    sample_tweet = self.tweets[0]
     ngrams = self.get_ngrams_tweet(sample_tweet)
     ngrams_tuple_count = LanguageModel.ngram_count_dict(ngrams)
     return 'Tweet: {0}\nLanguage: {1}\nNGrams: {2}\nNGramsTupleCount: {3}\n'.format(sample_tweet, self.language, ngrams, ngrams_tuple_count)

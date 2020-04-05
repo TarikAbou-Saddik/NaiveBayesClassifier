@@ -20,12 +20,10 @@ def main():
   # Train our model with the training set provided.
   classifier.train()
 
-  print('Done training model.')
-
   # Test our classifier model on the test set.
   classifier.classify()
 
-  print('Done classifiying. See Trace and Evaluation files in data folder.')
+  print('\nProgram terminated. Please consult the data folder for results.')
 
 # Run our main program.
 if __name__ == "__main__":
