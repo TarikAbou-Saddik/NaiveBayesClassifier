@@ -23,7 +23,7 @@ def main():
   # Test our classifier model on the test set.
   classifier.classify()
 
-  print('\nProgram terminated. Please consult the data folder for results.')
+  print('\nProgram terminated. Please consult the \'data\' folder for results.')
 
 # Run our main program.
 if __name__ == "__main__":

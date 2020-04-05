@@ -57,6 +57,7 @@ class Language(Enum):
       return Language.Portuguese
 
 
-class Result(Enum):
-  Wrong = 0
-  Correct = 1
+class ClassifyTupleResult(Enum):
+  CalculatedClass = 0
+  Score = 1
+  CorrectClass = 2
