@@ -5,12 +5,12 @@
 import os
 from Tweet import Tweet
 
-class CorpusFileHandler:
+class CorpusParser:
   DEFAULT_DIR = "data"
 
   @staticmethod
   def parse_corpus(filename):
-    path = CorpusFileHandler.set_path(filename)
+    path = CorpusParser.set_path(filename)
     tweets = dict()
     with open(path, "r") as file:
       for line in file:
@@ -22,13 +22,13 @@ class CorpusFileHandler:
   
   @staticmethod
   def write(filename, lines):
-    path = CorpusFileHandler.set_path(filename)
+    path = CorpusParser.set_path(filename)
     with open(path, 'w') as file:
         file.write(lines)
 
   @staticmethod
   def set_path(filename):
-    return os.path.join(CorpusFileHandler.DEFAULT_DIR, filename)
+    return os.path.join(CorpusParser.DEFAULT_DIR, filename)
 
 
     

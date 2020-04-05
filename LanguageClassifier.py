@@ -2,8 +2,10 @@
 # Date: Sunday April 5th, 2020
 # Student ID: 27518722
 
-from CorpusFileHandler import CorpusFileHandler
-from NGramModel import NGramModel, NGram, Vocabulary, Enum
+from CorpusParser import CorpusParser
+from LanguageModel import LanguageModel
+from Enums import Vocabulary, NGram
+
 
 class LanguageClassifier:
 
@@ -17,26 +19,48 @@ class LanguageClassifier:
     params = self.parse_params(parameters)
 
     self.vocabulary = params[0]
-    self.ngram_size = params[1]
+    self.ngram_type = params[1]
     self.smoothing_value = params[2]
     self.training_file_name = params[3]
     self.test_file_name = params[4]
 
-    # Obtain our training and test tweets in the form of a dictionary
-    self.training_tweets_dict = CorpusFileHandler.parse_corpus(self.training_file_name)
-    self.test_tweets_dict = CorpusFileHandler.parse_corpus(self.test_file_name)
+    # Obtain our training and test tweets in the form of a dictionary: {key: tweet_id, value: tweet}
+    self.training_tweets_dict = CorpusParser.parse_corpus(self.training_file_name)
+    self.test_tweets_dict = CorpusParser.parse_corpus(self.test_file_name)
 
-    # Results
-    self.model_classes = dict()
+    # Our list of language models
+    self.language_models = []
+
+    # Classified tweets
+    self.classified_tweets = dict()
 
   def train(self):
-    # Generate our ngram model
-    model = NGramModel(self.training_tweets_dict, self.ngram_size, self.vocabulary)
-    print(model)
+    # Create a language model for each language found in the training corpus.
+    for (language, tweets) in self.group_tweets_by_lang().items():
+      model = LanguageModel(language, tweets, self.ngram_type, self.vocabulary, self.smoothing_value)
+      self.language_models.append(model)
 
+  def classify(self):
+    for (tweet_id, tweet) in self.test_tweets_dict.items():
+      most_likely_class = ''
+      highest_probability = 0
+      for model in self.language_models:
+        probability = model.likelihood(tweet.body)
+        if probability > highest_probability:
+          highest_probability = probability
+          most_likely_class = model.language
+      self.classified_tweets[tweet_id] = most_likely_class
 
-  def test(self):
-    print('Testing our model')
+  def group_tweets_by_lang(self):
+    tweets_list = self.training_tweets_dict.values()
+    tweets_by_language = dict()
+    for tweet in tweets_list:
+      language = tweet.language
+      if language in tweets_by_language:
+        tweets_by_language[language].append(tweet.body)
+        continue
+      tweets_by_language[language] = [tweet.body]
+    return tweets_by_language
 
   def model_accuracy(self):
     return ''
@@ -58,15 +82,16 @@ class LanguageClassifier:
 
   def output_trace(self):
     lines = []
-    for tweet_id, tweet in self.test_tweets_dict.items():
-      model_class = self.model_classes[tweet_id]
+    for (tweet_id, tweet) in self.test_tweets_dict.items():
+      calculated_class = self.classified_tweets[tweet_id]
       class_score = 0
       correct_class = tweet.language
-      label = 'correct'
-      lines.append('{0}  {1}  {2}  {4}  {5}\r'.format(tweet_id, model_class, class_score, correct_class, label))
+      label = 'Correct' if correct_class == calculated_class else 'Wrong'
+      lines.append('{0}  {1}  {2}  {3}  {4}\r'.format(tweet_id, calculated_class, class_score, correct_class, label))
     
-    CorpusFileHandler.write(self.get_filename('trace'), ''.join(lines))
+    CorpusParser.write(self.get_filename('trace'), ''.join(lines))
 
+  # TODO: Implement
   def output_eval(self):
     lines = []
     # Accuracy
@@ -80,10 +105,10 @@ class LanguageClassifier:
     # Macro-F1 and weighted-average F1
     lines.append('{0}  {1}'.format(self.macro_f1(), self.weight_avg_f1()))
 
-    CorpusFileHandler.write('eval', ''.join(lines))
+    CorpusParser.write('eval', ''.join(lines))
 
   def get_filename(self, file_type):
-    return '{0}_{1}_{2}_{3}'.format(file_type, self.vocabulary, self.ngram_size, self.smoothing_value)
+    return '{0}_{1}_{2}_{3}'.format(file_type, self.vocabulary, self.ngram_type, self.smoothing_value)
 
   def parse_params(self, parameters):
     parsed_params = []
@@ -98,6 +123,6 @@ class LanguageClassifier:
     return '''
 Vocabulary Choice: {0}
 N-Gram Size: {1}
-Smoothing Value: {2}'''.format(self.vocabulary, self.ngram_size, self.smoothing_value)
+Smoothing Value: {2}'''.format(self.vocabulary, self.ngram_type, self.smoothing_value)
   
 
