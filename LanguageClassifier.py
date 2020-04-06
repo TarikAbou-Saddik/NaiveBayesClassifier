@@ -159,7 +159,6 @@ class LanguageClassifier:
       sum_weighted_f1 = sum_weighted_f1 + self.per_class_f1[chosen_class] * chosen_class_correct_count
     return round(sum_weighted_f1 / len(tuple_result_list), 4)
 
-  # TODO: Check if something's up with the score.
   def output_trace(self):
     print('\nOutputting trace file...')
     lines = []
