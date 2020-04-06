@@ -20,31 +20,36 @@ class LanguageModel:
     # Break tweet into ngrams
     ngrams_tweet = self.get_ngrams_tweet(tweet)
     likelihood = 0
-    # if LanguageModel.count == 0:
-    #   print('Length of ngrams in tweet: {0}'.format(len(ngrams_tweet)))
-    
     for ngram_tuple in ngrams_tweet:
       counter = 0
       if ngram_tuple in self.probabilities:
         counter = counter + 1
-        likelihood = likelihood + log10(self.probabilities[ngram_tuple])
-    #   if LanguageModel.count == 0:
-    #     print('{0} probabilities used to sum to likelihood {1}'.format(counter, likelihood))
-    # LanguageModel.count = LanguageModel.count + 1  
+        likelihood = likelihood + log10(self.probabilities[ngram_tuple]) 
     return likelihood
 
-  # TODO: Add smoothing to calculation
-  # Calculating probabilities
   def generate_probabilities(self):
     probabilities = dict()
     ngrams = self.get_ngrams_all()
     ngrams_by_tuple_count = self.get_ngrams_by_tuple_count()
     ngrams_by_total_count = self.get_ngrams_by_total_count()
     for ngram_tuple in ngrams:
-      count = ngrams_by_tuple_count[ngram_tuple]
-      total_count = ngrams_by_total_count[ngram_tuple[0]]
+      vocab_length = self.get_vocab_length()
+      ngram_length = NGram.from_str(self.ngram_type).value
+      count = ngrams_by_tuple_count[ngram_tuple] + self.smoothing_value
+      total_count = ngrams_by_total_count[ngram_tuple[0]] + (self.smoothing_value * (vocab_length ** ngram_length))
       probabilities[ngram_tuple] = count / total_count
     return probabilities
+
+  def get_vocab_length(self):
+    valid_isalpha_chars_num = 116766
+    valid_lowercase_num = 26
+    model_vocab = Vocabulary.from_str(self.vocabulary)
+    if model_vocab == Vocabulary.LowercaseOnly:
+      return valid_lowercase_num
+    if model_vocab == Vocabulary.LowerAndUpperCase:
+      return 2 * valid_lowercase_num
+    if model_vocab == Vocabulary.IsAlpha:
+      return valid_isalpha_chars_num
 
   # Obtain a dictionary with key: tuple(ngram, next_char) and value: frequency in corpus
   def get_ngrams_by_total_count(self):

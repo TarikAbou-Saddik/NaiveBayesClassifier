@@ -8,8 +8,6 @@ from Enums import Vocabulary, NGram, Language, ClassifyTupleResult
 
 import time
 
-# TODO: Implement smoothing.
-
 class LanguageClassifier:
 
   VOCAB_DEFAULT = Vocabulary.LowercaseOnly.name
@@ -177,7 +175,6 @@ class LanguageClassifier:
     
     CorpusParser.write(self.get_filename('trace'), ''.join(lines))
 
-  # TODO: Implement
   def output_eval(self):
     print('Outputting evaluation file...')
     lines = []
@@ -200,7 +197,6 @@ class LanguageClassifier:
   def format_metric(self, per_class):
     return '{:.4f}  {:.4f}  {:.4f}  {:.4f}  {:.4f}  {:.4f}\r'.format(per_class['eu'], per_class['ca'], per_class['gl'], per_class['es'], per_class['en'], per_class['pt'])
 
-  # TODO: Change to numbers for vocab and ngram choices.
   def get_filename(self, file_type):
     vocab_int = Vocabulary.from_str(self.vocabulary).value
     ngram_int = NGram.from_str(self.ngram_type).value
