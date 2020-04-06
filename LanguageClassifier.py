@@ -76,7 +76,7 @@ class LanguageClassifier:
       most_likely_class = str()
       highest_probability = float("-inf")
       for model in self.language_models:
-        probability = model.likelihood(tweet.body)
+        probability = model.likelihood(tweet.body, len(self.training_tweets_dict))
         if probability > highest_probability:
           highest_probability = probability
           most_likely_class = model.language
@@ -109,7 +109,6 @@ class LanguageClassifier:
     accuracy = round((total_num_correct / total_num_classes), 4)
     return '{0}\r'.format(accuracy)
 
-  # TODO: Refactor this.
   def calc_precision(self):
     # Order of classes: eu, ca, gl, es, en, pt
     per_class = dict()
@@ -122,7 +121,6 @@ class LanguageClassifier:
       per_class[chosen_class] = precision
     self.per_class_precision = per_class
   
-  # TODO: Refactor this.
   def calc_recall(self):
     # Order of classes: eu, ca, gl, es, en, pt
     per_class = dict()

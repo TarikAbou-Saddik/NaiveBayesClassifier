@@ -16,7 +16,7 @@ class LanguageModel:
     self.smoothing_value = smoothing_value
     self.probabilities = self.generate_probabilities()
 
-  def likelihood(self, tweet):
+  def likelihood(self, tweet, total_tweet_count):
     # Break tweet into ngrams
     ngrams_tweet = self.get_ngrams_tweet(tweet)
     likelihood = 0
@@ -25,7 +25,8 @@ class LanguageModel:
       if ngram_tuple in self.probabilities:
         counter = counter + 1
         likelihood = likelihood + log10(self.probabilities[ngram_tuple]) 
-    return likelihood
+    prior_probability_lang = len(self.tweets) / total_tweet_count
+    return log10(prior_probability_lang) + likelihood
 
   def generate_probabilities(self):
     probabilities = dict()
