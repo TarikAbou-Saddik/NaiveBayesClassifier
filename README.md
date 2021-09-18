@@ -1,4 +1,6 @@
-# COMP 472 - Project 2
+# Concordia University
+
+# COMP 472 (Artificial Intelligence) - Project 2
 
 ## **Deliverable 1 Milestones**
 
